@@ -117,6 +117,6 @@ Le mots de passe est mémorisé par défaut pour une durée de 15 minutes.
 
 **Quelle commande permet de forcer sudo à oublier votre mot de passe ?** 
 
-
+`sudo -k`
 
 
