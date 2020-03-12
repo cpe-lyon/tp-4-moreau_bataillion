@@ -2,7 +2,7 @@
 
 ## Exercice 1. Gestion des utilisateurs et des groupes
 
-**1. Commencez par créer deux groupes groupe1 et groupe2  **
+**1. Commencez par créer deux groupes groupe1 et groupe2**  
 
 `sudo addgroup groupe1`
 Pour vérifier que le groupe a bien été créé :  
