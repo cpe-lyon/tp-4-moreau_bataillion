@@ -68,14 +68,14 @@ Avec `su u1` on se connecte en tant que u1.
 
 **11. Quels sont l’uid et le gid de u1 ?** 
 
-Avec `id` on obtient uid=1001 et gid=1001.  
+Avec `id` on obtient uid=1001 et gidup=1001.  
 
 **12. Quel utilisateur a pour uid 1003 ?** 
 
 `sudo cut -d: -f1-3 /etc/passwd | grep 1003 | cut -d: -f1` : permet de récupérer la ligne qui comprend un uid de 1003 et renvoie la première colonne de cette ligne (qui correspond au nom d'utilisateur).  
-
+up
 L'utilisateur u3 a pour uid 1003.
-
+up
 **13. Quel est l’id du groupe groupe1 ?**
 
 `sudo grep groupe1 /etc/group | cut -d: -f3` : on sélectionne la ligne qui correspond au groupe1 et on affiche la colonne qui correspond au gid.
@@ -123,6 +123,60 @@ Le mots de passe est mémorisé par défaut pour une durée de 15 minutes.
 
 `sudo -k`
 
+## Exercice 2. Gestion des permissions
+
+**1. Dans votre $HOME, créez un dossier test, et dans ce dossier un fichier fichier contenant quelques
+lignes de texte. Quels sont les droits sur test et fichier ?**  
+
+**2. Retirez tous les droits sur ce fichier (même pour vous), puis essayez de le modifier et de l’afficher en
+tant que root. Conclusion ?**  
+
+**3. Redonnez vous les droits en écriture et exécution sur fichier puis exécutez la commande echo "echo
+Hello" > fichier. On a vu lors des TP précédents que cette commande remplace le contenu d’un
+fichier s’il existe déjà. Que peut-on dire au sujet des droits ?**  
+
+**4. Essayez d’exécuter le fichier. Est-ce que cela fonctionne ? Et avec sudo ? Expliquez.**  
+
+**5. Placez-vous dans le répertoire test, et retirez-vous le droit en lecture pour ce répertoire. Listez le
+contenu du répertoire, puis exécutez ou affichez le contenu du fichier fichier. Qu’en déduisez-vous ?
+Rétablissez le droit en lecture sur test**  
+
+**6. Créez dans test un fichier nouveau ainsi qu’un répertoire sstest. Retirez au fichier nouveau et au
+répertoire test le droit en écriture. Tentez de modifier le fichier nouveau. Rétablissez ensuite le droit
+en écriture au répertoire test. Tentez de modifier le fichier nouveau, puis de le supprimer. Que pouvezvous
+déduire de toutes ces manipulations ?**  
+
+**7. Positionnez vous dans votre répertoire personnel, puis retirez le droit en exécution du répertoire test.
+Tentez de créer, supprimer, ou modifier un fichier dans le répertoire test, de vous y déplacer, d’en
+lister le contenu, etc…Qu’en déduisez vous quant au sens du droit en exécution pour les répertoires ?**  
+
+**8. Rétablissez le droit en exécution du répertoire test. Positionnez vous dans ce répertoire et retirez lui
+à nouveau le droit d’exécution. Essayez de créer, supprimer et modifier un fichier dans le répertoire
+test, de vous déplacer dans ssrep, de lister son contenu. Qu’en concluez-vous quant à l’influence des
+droits que l’on possède sur le répertoire courant ? Peut-on retourner dans le répertoire parent avec ”cd
+..” ? Pouvez-vous donner une explication ?**  
+
+**9. Rétablissez le droit en exécution du répertoire test. Attribuez au fichier fichier les droits suffisants
+pour qu’une autre personne de votre groupe puisse y accéder en lecture, mais pas en écriture.**  
+
+**10. Définissez un umask très restrictif qui interdit à quiconque à part vous l’accès en lecture ou en écriture,
+ainsi que la traversée de vos répertoires. Testez sur un nouveau fichier et un nouveau répertoire.**  
+
+**11. Définissez un umask très permissif qui autorise tout le monde à lire vos fichiers et traverser vos répertoires,
+mais n’autorise que vous à écrire. Testez sur un nouveau fichier et un nouveau répertoire.**  
+
+**12. Définissez un umask équilibré qui vous autorise un accès complet et autorise un accès en lecture aux
+membres de votre groupe. Testez sur un nouveau fichier et un nouveau répertoire.**  
+
+**13. Transcrivez les commandes suivantes de la notation classique à la notation octale ou vice-versa (vous
+pourrez vous aider de la commande stat pour valider vos réponses) :**  
+- chmod u=rx,g=wx,o=r fic  
+- chmod uo+w,g-rx fic en sachant que les droits initiaux de fic sont r--r-x---  
+- chmod 653 fic en sachant que les droits initiaux de fic sont 711  
+- chmod u+x,g=w,o-r fic en sachant que les droits initiaux de fic sont r--r-x---  
+
+**14. Affichez les droits sur le programme passwd. Que remarquez-vous ? En affichant les droits du fichier
+/etc/passwd, pouvez-vous justifier les permissions sur le programme passwd ?**  
 
 
 
