@@ -239,11 +239,17 @@ mkdir le_dossier_3
 pourrez vous aider de la commande stat pour valider vos réponses) :**  
 - chmod u=rx,g=wx,o=r fic : `chmod 534 fic`  
 - chmod uo+w,g-rx fic en sachant que les droits initiaux de fic sont r--r-x--- : : `chmod 602 fic`  
-- chmod 653 fic en sachant que les droits initiaux de fic sont 711 : `chmod u-x g+r o+w fic`  
+- chmod 653 fic en sachant que les droits initiaux de fic sont 711 : `ch`mod u-x g+r o+w fic`  
 - chmod u+x,g=w,o-r fic en sachant que les droits initiaux de fic sont r--r-x--- : `chmod 520 fic`  
 
 **14. Affichez les droits sur le programme passwd. Que remarquez-vous ? En affichant les droits du fichier
 /etc/passwd, pouvez-vous justifier les permissions sur le programme passwd ?**  
+
+Frâce à `ls -l /usr/bin/passwd` on obtient les autorisations liées au programme passwd.  
+On obtient : -rws r-x r-x : le groupe propriétaire et les autres ont le droit de lire et d'exécuter ce programme. L'utilisateur propriétaire (root) a le droit de lire, écrire et exécuter le programme. Le s indique que le programme peut être utilisé avec les droits propriétaires.  
+Lorsque l'on exécute la commande `ls -l /etc/passwd`, on obtient : -rw-r--r--. Ce sont les droits d'accès au fichier passwd.  
+La commande passwd a besoin d'écrire dans le fichier passwd. Ce fichier n'est accessible en écriture que par le root. La commande passwd est possédée par le root et elle a besoin d'un droit d'écriture de l'utilisateur propriétaire pour accéder au fichier passwd. Ainsi, elle pourra modifier le contenu du fichier passwd, ce qui est nécessaire à la commande passwd dans le cas d'une utlisation en root. Les autres utilisateurs et le groupe propriétaire n'ont accès qu'en lecture au fichier passwd car ils ont  besoin d'exécuter la commande passwd uniquement et pas de modifier le fichier passwd.
+
 
 
 
