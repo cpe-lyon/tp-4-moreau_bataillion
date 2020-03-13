@@ -91,7 +91,7 @@ Le groupe2 a pour gid 1002.
 **15. Retirez l’utilisateur u3 du groupe groupe2. Que se passe-t-il ? Expliquez.**  
 
 `sudo gpasswd -d u3 groupe2` retire u3 du groupe groupe2.
-Lorsque l'on regarde à quels groupes appartient u3, groupe2 reste son groupe primaire. Pourtant lorsque l'on vérifie les membres du groupe2, u3 a bien été supprimé. 
+Lorsque l'on regarde à quels groupes appartient u3 (`groups u3`), groupe2 reste son groupe primaire  car un utilisateur ne peut pas ne pas avoir de groupe. Pourtant lorsque l'on vérifie les membres du groupe2 (`nano /etc/group`), u3 a bien été supprimé. Ainsi, si on change le groupe primaire de u3, l'utilisateur ne fera plus parti du groupe2.
 
 
 **16. Modifiez le compte de u4 de sorte que :**  
@@ -128,27 +128,67 @@ Le mots de passe est mémorisé par défaut pour une durée de 15 minutes.
 **1. Dans votre $HOME, créez un dossier test, et dans ce dossier un fichier fichier contenant quelques
 lignes de texte. Quels sont les droits sur test et fichier ?**  
 
+Dans Marialice, on exécute :
+```
+mkdir test
+touch test/fichier
+```
+Pour voir les droits sur un éléments, on fait : `ls -l`
+Pour test : drwxrwx-wx : d indique qu'il s'agit d'un répertoire; l'utilisateur propriétaire (nous) et le groupe propriétaire ont droit de lecture,d'écriture et d'exécution;  les autres ont droit d'écriture et d'exécution.
+Pour fichier : -rw-rw--w- : l'utilisateur propriétaire et le groupe propriétaire ont droit de lecture et d'écriture; les autres ont droit d'écriture.
+
 **2. Retirez tous les droits sur ce fichier (même pour vous), puis essayez de le modifier et de l’afficher en
-tant que root. Conclusion ?**  
+tant que root. Conclusion ?** 
+
+`sudo chmod 000 test/fichier` permet de supprimer tous les droits sur fichier.
+En utilisant `sudo`, on peut toujours avoir accès au fichier et le modifier.
 
 **3. Redonnez vous les droits en écriture et exécution sur fichier puis exécutez la commande echo "echo
 Hello" > fichier. On a vu lors des TP précédents que cette commande remplace le contenu d’un
 fichier s’il existe déjà. Que peut-on dire au sujet des droits ?**  
 
+`sudo chmod 300 test/fichier` permet de se donner les droits d'écriture et d'exécution.
+Lorsque l'on fait : `echo "echo Hello" > fichier`, on écrit dans le fichier.  
+Cependant, on ne peut pas vérifier que le fichier a bien été modifié car nous n'avons pas les droits de lecture. Il faut utiliser sudo et root pour vérifier le contenu de fichier.  
+
 **4. Essayez d’exécuter le fichier. Est-ce que cela fonctionne ? Et avec sudo ? Expliquez.**  
+
+L'exécution grâce à `./fichier` ne fonctionne pas. Afin de pouvoir exécuter un fichier, l'utilisateur a besoin des droits de lecture. En effet, il faut pouvoir lire le contenu d'un fichier pour l'exécuter. Ici, nous n'avons pas les droits de lecture donc nous ne pouvons pas exécuter le fichier.  
+On réussit l'exécution graĉe à `sudo ./fichier` qui renvoie bien Hello. Le super-utilisateur root a tous les droits, il passe au-dessus des restrictions de droits. Il peut donc lire le fichier et ainsi l'exécuter.  
 
 **5. Placez-vous dans le répertoire test, et retirez-vous le droit en lecture pour ce répertoire. Listez le
 contenu du répertoire, puis exécutez ou affichez le contenu du fichier fichier. Qu’en déduisez-vous ?
 Rétablissez le droit en lecture sur test**  
 
+`sudo chmod u-r /home/marialice/test` permet de se retirer les droits de lecture. Nous sommes l'utilisateur propriétaire (u) auquel nous enlevons (-) les droits de lecture (r).  
+Un `ls -l` dans home/test est inefficace : nous n'avons pas le droit de lecture sur ce dossier. Nous ne pouvons donc pas voir les fichiers présents dans le dossier.
+Cependant, on peut exécuter et lire le fichier fichier car les droits de lecture du fichier sont bien actifs eux.(On s'est donné les droits de lecture sur le fichier fichier.)   
+`sudo chmod u+r /home/marialice/test` permet de se redonner les droits de lecture.  
+
 **6. Créez dans test un fichier nouveau ainsi qu’un répertoire sstest. Retirez au fichier nouveau et au
 répertoire test le droit en écriture. Tentez de modifier le fichier nouveau. Rétablissez ensuite le droit
-en écriture au répertoire test. Tentez de modifier le fichier nouveau, puis de le supprimer. Que pouvezvous
+en écriture au répertoire test. Tentez de modifier le fichier nouveau, puis de le supprimer. Que pouvez vous
 déduire de toutes ces manipulations ?**  
+
+Dans test :
+```
+mkdir sstest
+touch nouveau
+sudo chmod a-w nouveau
+sudo chmod a-w test
+```
+Le `a` correspond à all (tous les utilisateurs potentiels)
+Avec `nano nouveau`, on ne peut pas écrire dans le fichier : nous n'avons pas les droits d'écriture dans le dossier test.  
+On a rétabli les droits d'écriture du dossier test. On ne peut toujours pas modifier le fichier nouveau : on n'a pas les droits d'écriture sur le fichier nouveau. Cependant, on peut le supprimer avec `rm nouveau` car on a les droits sur le dossier test. Cette suppression est sécurisée : on nous demande une confirmation car le dossier est protégé.  
+Les droits du dossier prévalent lors d'une création ou d'une suppression d'un élément en son sein. Les droits du fichier prévalent sur le contenu du fichier lui-même.  
 
 **7. Positionnez vous dans votre répertoire personnel, puis retirez le droit en exécution du répertoire test.
 Tentez de créer, supprimer, ou modifier un fichier dans le répertoire test, de vous y déplacer, d’en
 lister le contenu, etc…Qu’en déduisez vous quant au sens du droit en exécution pour les répertoires ?**  
+
+`sudo chmod a-x test` permet de retirer les droits d'exécution au dossier test.
+Pour les répertoires, le droit d'exécution correspond au droit de traverser le répertoire. Cela comprend: le droit de se déplacer dans le répertoire et dans ses sous-dossiers, le droit de créer un sous-dossier ou un fichier, le droit d'accéder au contenu du fichier du répertoire. Globalement, cel empêche toute interraction qui nécessite d epénétrer dans le répertoire.  
+On a tout de même la possibilité d'accéder aux noms des éléments contenus dans le répertoire car on a toujours le droit de lecture. On ne peut pas accéder aux noms au-delà d'un niveau d'arborescence.  
 
 **8. Rétablissez le droit en exécution du répertoire test. Positionnez vous dans ce répertoire et retirez lui
 à nouveau le droit d’exécution. Essayez de créer, supprimer et modifier un fichier dans le répertoire
@@ -156,24 +196,51 @@ test, de vous déplacer dans ssrep, de lister son contenu. Qu’en concluez-vous
 droits que l’on possède sur le répertoire courant ? Peut-on retourner dans le répertoire parent avec ”cd
 ..” ? Pouvez-vous donner une explication ?**  
 
+Nous ne pouvons réaliser aucune des commandes de la consigne dans le dossier test. Contrairement à la question 7, nous ne pouvons plus lister le contenu du repertoire. En effet,`ls`étant un executable, il suit les droits du dossier depuis lequel il est appelé.  
+Nous pouvons retourner au dossier parent avec la commande `cd ..`, cela est possible car cd est une commande interne à bash et le dossier parent n'est pas impacté par les droits sur un dossier qui lui est inférieur dans l'arborescence. Une fois remonté à l'étage supérieur, nous ne pouvons plus redescendre.  
+Finalement, retirer les droits depuis le répertoire concerné est encore plus contraignant que de les retirer depuis un dossier parent.  
+
 **9. Rétablissez le droit en exécution du répertoire test. Attribuez au fichier fichier les droits suffisants
 pour qu’une autre personne de votre groupe puisse y accéder en lecture, mais pas en écriture.**  
 
+```
+chmod +x test
+chmod g+r-w test/fichier
+```
+
 **10. Définissez un umask très restrictif qui interdit à quiconque à part vous l’accès en lecture ou en écriture,
 ainsi que la traversée de vos répertoires. Testez sur un nouveau fichier et un nouveau répertoire.**  
+```
+umask 077
+touch le_fichier
+chmod u+x le_fichier
+mkdir le_dossier
+```
 
 **11. Définissez un umask très permissif qui autorise tout le monde à lire vos fichiers et traverser vos répertoires,
 mais n’autorise que vous à écrire. Testez sur un nouveau fichier et un nouveau répertoire.**  
+```
+umask 022
+touch le_fichier_2
+chmod a+x le_fichier_2
+mkdir le_dossier_2
+```
 
 **12. Définissez un umask équilibré qui vous autorise un accès complet et autorise un accès en lecture aux
 membres de votre groupe. Testez sur un nouveau fichier et un nouveau répertoire.**  
+```
+umask 037
+touch le_fichier_3
+chmod u+x le_fichier_3
+mkdir le_dossier_3
+```
 
 **13. Transcrivez les commandes suivantes de la notation classique à la notation octale ou vice-versa (vous
 pourrez vous aider de la commande stat pour valider vos réponses) :**  
-- chmod u=rx,g=wx,o=r fic  
-- chmod uo+w,g-rx fic en sachant que les droits initiaux de fic sont r--r-x---  
-- chmod 653 fic en sachant que les droits initiaux de fic sont 711  
-- chmod u+x,g=w,o-r fic en sachant que les droits initiaux de fic sont r--r-x---  
+- chmod u=rx,g=wx,o=r fic : `chmod 534 fic`  
+- chmod uo+w,g-rx fic en sachant que les droits initiaux de fic sont r--r-x--- : : `chmod 602 fic`  
+- chmod 653 fic en sachant que les droits initiaux de fic sont 711 : `chmod u-x g+r o+w fic`  
+- chmod u+x,g=w,o-r fic en sachant que les droits initiaux de fic sont r--r-x--- : `chmod 520 fic`  
 
 **14. Affichez les droits sur le programme passwd. Que remarquez-vous ? En affichant les droits du fichier
 /etc/passwd, pouvez-vous justifier les permissions sur le programme passwd ?**  
