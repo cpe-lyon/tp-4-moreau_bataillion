@@ -1,3 +1,6 @@
+BATAILLION Alice
+MOREAU Marianne
+
 # TP 4 - Utilisateurs, groupes et permissions
 
 ## Exercice 1. Gestion des utilisateurs et des groupes
@@ -118,5 +121,7 @@ Le mots de passe est mémorisé par défaut pour une durée de 15 minutes.
 **Quelle commande permet de forcer sudo à oublier votre mot de passe ?** 
 
 `sudo -k`
+
+
 
 
